@@ -12,6 +12,7 @@ from views.main_view import MainView
 
 
 def main() -> None:
+    """Create the Qt application, instantiate the ViewModel and View, and start the event loop."""
     app = QApplication(sys.argv)
     app.setApplicationName("EMG Live Viewer")
     app.setApplicationVersion("1.0.0")

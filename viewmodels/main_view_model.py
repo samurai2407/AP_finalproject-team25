@@ -9,6 +9,11 @@ from models.signal_processor import process_signal
 
 
 class MainViewModel(QObject):
+    """QObject that owns the update timer, application state, and Qt signals.
+
+    Polls the TCP model on every timer tick, applies signal processing,
+    and emits results to the View. No widgets are imported or created here.
+    """
     # emitted each timer tick with processed (x, y) for the active channel
     plot_updated = Signal(object, object)
 
@@ -26,6 +31,7 @@ class MainViewModel(QObject):
     CHANNELS: int = 32
 
     def __init__(self) -> None:
+        """Set up the TCP model, state variables, and the QTimer polling loop."""
         super().__init__()
 
         self.model = TcpClientModel(
@@ -121,17 +127,20 @@ class MainViewModel(QObject):
     # ------------------------------------------------------------------
 
     def _emit_single_channel(self) -> None:
+        """Process and emit (x, y) for the currently selected channel."""
         x, raw = self.model.get_window(self.selected_channel)
         raw_2d = raw[np.newaxis, :]   # process_signal expects (channels, samples)
         processed = process_signal(raw_2d, self.SAMPLING_RATE, self.signal_mode)
         self.plot_updated.emit(x, processed[0, :])
 
     def _emit_all_channels(self) -> None:
+        """Process and emit (x, data) for all 32 channels."""
         x, raw = self.model.get_all_channels_window()
         processed = process_signal(raw, self.SAMPLING_RATE, self.signal_mode)
         self.all_channels_updated.emit(x, processed)
 
     def _emit_recording_ready(self) -> None:
+        """Emit the full recorded buffer for offline inspection, or a warning if empty."""
         rec = self.model.recorded_buffer
         if rec.shape[1] < 2:
             self.status_updated.emit(

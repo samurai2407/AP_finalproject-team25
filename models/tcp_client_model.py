@@ -23,6 +23,7 @@ class TcpClientModel:
         samples_per_packet: int = 18,
         window_seconds: float = 10.0,
     ):
+        """Initialise buffers and connection parameters. Does not open the socket."""
         self.host = host
         self.port = port
         self.sampling_rate = sampling_rate

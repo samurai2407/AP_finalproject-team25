@@ -258,3 +258,6 @@ class MainView(QMainWindow):
         self._connect_btn.setEnabled(not connected)
         self._disconnect_btn.setEnabled(connected)
         self._port_edit.setEnabled(not connected)
+        # Keep the offline button enabled whenever recorded data is available,
+        # regardless of whether the client is currently connected or not.
+        self._offline_btn.setEnabled(self._recording_x is not None)

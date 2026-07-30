@@ -32,7 +32,7 @@ PACKET_INTERVAL: float = SAMPLES_PER_PACKET / SAMPLING_RATE   # 0.009 s
 # ---------------------------------------------------------------------------
 # Load recording
 # ---------------------------------------------------------------------------
-REPO_ROOT = pathlib.Path(__file__).parent.parent
+REPO_ROOT = pathlib.Path(__file__).parent
 PKL_PATH = REPO_ROOT / "recording.pkl"
 
 print(f"Loading recording from {PKL_PATH} ...")
