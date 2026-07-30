@@ -3,9 +3,9 @@
 ## Group information
 
 | Name | Responsibility |
-|------|---------------|
+|------|----------------|
 | Prem Mahajan (prem.mahajan@fau.de) | TCP client model, signal processor, ViewModel |
-| Nishant Gangwar () | VisPy live plot views, all-channels overview |
+| Nishant Gangwar (nishant.gangwar@fau.de) | VisPy live plot views, all-channels overview |
 | Husam Altamimi (husam.m.altamimi@fau.de) | Offline Matplotlib inspection, main view, README |
 
 ---
@@ -41,11 +41,11 @@ final_project/
 
 ### MVVM responsibilities
 
-| Layer      | File(s)                        | Responsibility |
-|------------|-------------------------------|----------------|
-| Model      | `tcp_client_model.py`          | TCP I/O, byte buffer, rolling data buffer |
-| Model      | `signal_processor.py`          | Stateless signal processing (no GUI) |
-| ViewModel  | `main_view_model.py`           | QTimer loop, state, Qt signals — no widgets |
+| Layer      | File(s)                        | Responsibility                                     |
+|------------|--------------------------------|----------------------------------------------------|
+| Model      | `tcp_client_model.py`          | TCP I/O, byte buffer, rolling data buffer          |
+| Model      | `signal_processor.py`          | Stateless signal processing (no GUI)               |
+| ViewModel  | `main_view_model.py`           | QTimer loop, state, Qt signals — no widgets        |
 | View       | `main_view.py`, `plot_view.py`, `offline_view.py` | Widgets, plots — no TCP or math |
 
 ---

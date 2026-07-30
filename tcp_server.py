@@ -5,7 +5,7 @@ This is the server provided alongside Exercise 5.
 It loads the EMG recording, then streams it to any connecting client
 18 samples at a time at 2000 Hz (one packet every 9 ms).
 
-Usage:
+Usage: 
     python tcp_server.py [port]          default port: 12345
 
 The server loops the recording continuously so the client always has data.
