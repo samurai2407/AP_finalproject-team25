@@ -58,6 +58,27 @@ widget. All communication between layers flows through Qt signals and slots.
 
 ## Installation
 
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/samurai2407/AP_finalproject-team25.git
+cd AP_finalproject-team25
+```
+
+### 2. Add the data file
+
+Copy `recording.pkl` from Exercise 5 and paste it into the root of the
+cloned folder, next to `tcp_server.py`:
+
+```
+AP_finalproject-team25/
+├── recording.pkl     ← paste here
+├── tcp_server.py
+└── main.py
+```
+
+### 3. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -66,17 +87,35 @@ pip install -r requirements.txt
 
 ## Running the Application
 
-Start the server in one terminal:
+### Step 1 — Start the server
+
+In one terminal, run:
 
 ```bash
 python tcp_server.py
 ```
 
-Then run the client in a second terminal:
+### Step 2 — Start the client
+
+In a second terminal, run:
 
 ```bash
 python main.py
 ```
+
+### Step 3 — Connect and stream
+
+1. The port field is pre-filled with `12345`. Leave it as is.
+2. Click **Connect**. Streaming starts immediately — there is no separate
+   start button.
+3. The status label in the left panel updates to **● Connected** to confirm
+   the connection.
+
+### Step 4 — Disconnect and inspect offline
+
+Click **Disconnect** to stop the stream. The Matplotlib offline inspection
+window opens automatically, showing the full recorded session. You can
+switch channels and signal modes inside that window.
 
 ---
 
