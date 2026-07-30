@@ -28,7 +28,7 @@ The project follows the **MVVM** (Model – View – ViewModel) architecture pat
 final_project/
 ├── main.py                   Entry point
 ├── tcp_server.py             TCP server from Exercise 5 (included for graders)
-├── recording.pkl             EMG recording data (tracked in Git, included in clone)
+├── recording.pkl             EMG recording data (not tracked — add manually, see Installation)
 ├── requirements.txt          Python dependencies
 ├── README.md                 This file
 ├── models/
