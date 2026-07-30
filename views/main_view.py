@@ -30,6 +30,7 @@ class MainView(QMainWindow):
     N_CHANNELS: int = 32
 
     def __init__(self, view_model) -> None:
+        """Initialise the window, build all widgets, and wire signals."""
         super().__init__()
         self._vm = view_model
         self._recording_x: np.ndarray | None = None
@@ -143,6 +144,7 @@ class MainView(QMainWindow):
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
 
     def _build_status_bar(self) -> None:
+        """Create the bottom status bar with an initial ready message."""
         self._status_bar = QStatusBar()
         self.setStatusBar(self._status_bar)
         self._status_bar.showMessage("Ready. Enter a port and press Connect.")
@@ -152,6 +154,7 @@ class MainView(QMainWindow):
     # ------------------------------------------------------------------
 
     def _connect_signals(self) -> None:
+        """Connect all View↔ViewModel signals and slots."""
         # view → viewmodel
         self._connect_btn.clicked.connect(self._on_connect_clicked)
         self._disconnect_btn.clicked.connect(self._on_disconnect_clicked)
@@ -171,6 +174,7 @@ class MainView(QMainWindow):
     # ------------------------------------------------------------------
 
     def _on_connect_clicked(self) -> None:
+        """Validate the port field and tell the ViewModel to connect."""
         port_text = self._port_edit.text().strip()
         try:
             port = int(port_text)
@@ -187,18 +191,21 @@ class MainView(QMainWindow):
             self._set_connected_ui(True)
 
     def _on_disconnect_clicked(self) -> None:
+        """Stop streaming and reset the UI to the disconnected state."""
         self._vm.disconnect()
         self._set_connected_ui(False)
 
     def _on_channel_changed(self, value: int) -> None:
-        # spinner is 1-based; ViewModel is 0-based
+        """Forward the selected channel to the ViewModel (converts 1-based to 0-based)."""
         self._vm.set_channel(value - 1)
 
     def _on_mode_changed(self, index: int) -> None:
+        """Map the combo-box index to a mode string and update the ViewModel."""
         modes = ["original", "filtered", "rms"]
         self._vm.set_signal_mode(modes[index])
 
     def _on_all_channels_toggled(self, checked: bool) -> None:
+        """Switch the plot stack between single-channel and all-channels views."""
         self._vm.set_show_all_channels(checked)
         if checked:
             self._plot_stack.setCurrentIndex(1)
@@ -208,6 +215,7 @@ class MainView(QMainWindow):
             self._all_channels_btn.setText("Plot All Channels")
 
     def _on_status_updated(self, message: str) -> None:
+        """Update the status bar and the coloured connection indicator label."""
         self._status_bar.showMessage(message)
         if "Connected" in message and "Could not" not in message:
             self._conn_status_label.setText("● Connected")
@@ -218,12 +226,15 @@ class MainView(QMainWindow):
             self._set_connected_ui(False)
 
     def _on_recording_ready(self, x: np.ndarray, data: np.ndarray) -> None:
-        """Cache the recording so the offline dialog can use it."""
+        """Cache the recording and automatically open the offline inspection dialog."""
         self._recording_x = x
         self._recording_data = data
         self._offline_btn.setEnabled(True)
+        # Auto-open the offline plot as soon as the recording is available
+        self._open_offline_dialog()
 
     def _open_offline_dialog(self) -> None:
+        """Open the Matplotlib offline inspection dialog for the recorded data."""
         if self._recording_x is None or self._recording_data is None:
             self._status_bar.showMessage(
                 "No recorded data available yet. Connect and stream first."

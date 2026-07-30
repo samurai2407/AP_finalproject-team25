@@ -36,6 +36,20 @@ class OfflineInspectionDialog(QDialog):
         sampling_rate: float = 2000.0,
         parent: QWidget | None = None,
     ) -> None:
+        """
+        Initialise the dialog with the full recorded dataset.
+
+        Parameters
+        ----------
+        x_full : np.ndarray
+            Time axis in seconds for the entire recording.
+        data : np.ndarray
+            Raw recorded signal, shape (channels, samples).
+        sampling_rate : float
+            Sampling rate in Hz, used by the signal processor.
+        parent : QWidget or None
+            Optional parent widget.
+        """
         super().__init__(parent)
         self.setWindowTitle("Offline Signal Inspection")
         self.resize(1100, 650)
@@ -50,6 +64,7 @@ class OfflineInspectionDialog(QDialog):
         self._replot()
 
     def _build_ui(self) -> None:
+        """Build the channel spinner, mode combo, Matplotlib canvas, and toolbar."""
         root = QVBoxLayout(self)
         root.setSpacing(6)
 
@@ -94,7 +109,7 @@ class OfflineInspectionDialog(QDialog):
         root.addLayout(btn_row)
 
     def _replot(self) -> None:
-        """Redraw for the selected channel and mode."""
+        """Redraw the plot for the currently selected channel and signal mode."""
         ch = self._channel_spin.value() - 1
         mode = self.MODES[self._mode_combo.currentIndex()]
 

@@ -13,6 +13,7 @@ class SingleChannelPlotWidget(QWidget):
     LINE_COLOR = (0.1, 0.4, 0.85, 1.0)
 
     def __init__(self, parent: QWidget | None = None) -> None:
+        """Build the VisPy canvas with linked x/y axes and a placeholder line."""
         super().__init__(parent)
 
         layout = QVBoxLayout(self)
@@ -49,7 +50,7 @@ class SingleChannelPlotWidget(QWidget):
         layout.addWidget(self.canvas.native)
 
     def update_plot(self, x: np.ndarray, y: np.ndarray) -> None:
-        """Push new (x, y) data to the canvas."""
+        """Push new (x, y) data to the canvas and dynamically rescale both axes."""
         x = np.asarray(x, dtype=np.float32)
         y = np.asarray(y, dtype=np.float32)
 
@@ -58,6 +59,7 @@ class SingleChannelPlotWidget(QWidget):
 
         self._line.set_data(pos=np.column_stack((x, y)))
 
+        # Dynamic Y-scaling: pad by 10% of the signal range so the line is never clipped
         y_range = y.max() - y.min()
         pad = max(1e-6, 0.1 * y_range)
         self._view.camera.set_range(
@@ -79,6 +81,7 @@ class AllChannelsPlotWidget(QWidget):
     CHANNEL_SPACING: float = 3.0  # normalised units between channels
 
     def __init__(self, n_channels: int = 32, parent: QWidget | None = None) -> None:
+        """Build the VisPy canvas and create one Line visual per channel."""
         super().__init__(parent)
 
         self.n_channels = n_channels
@@ -122,7 +125,7 @@ class AllChannelsPlotWidget(QWidget):
         layout.addWidget(self.canvas.native)
 
     def update_plot(self, x: np.ndarray, data: np.ndarray) -> None:
-        """Redraw all channel lines with updated data."""
+        """Normalise and redraw all channel lines with vertical offsets."""
         x = np.asarray(x, dtype=np.float32)
         data = np.asarray(data, dtype=np.float32)
 
