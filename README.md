@@ -1,88 +1,108 @@
 # EMG Live Viewer — Final Project
 
-## Group information
+## Group Information
 
-| Name | Responsibility |
-|------|----------------|
-| Prem Mahajan (prem.mahajan@fau.de) | TCP client model, signal processor, ViewModel |
-| Nishant Gangwar (nishant.gangwar@fau.de) | VisPy live plot views, all-channels overview |
-| Husam Altamimi (husam.m.altamimi@fau.de) | Offline Matplotlib inspection, main view, README |
+**Group:** Group 25
+
+| Name | Email | Responsibility |
+|------|-------|---------------|
+| Prem Mahajan | prem.mahajan@fau.de | TCP client model, signal processor, ViewModel |
+| Nishant Gangwar | nishant.gangwar@fau.de | VisPy live plot views, all-channels overview |
+| Husam Altamimi | husam.m.altamimi@fau.de | Offline Matplotlib inspection, main view, README |
 
 ---
 
 ## Overview
 
-A **PySide6 desktop application** that connects to the Exercise 5 TCP server,
-visualises 32-channel EMG data in real time using **VisPy**, and lets the user
-inspect the full recording offline with **Matplotlib** after disconnecting.
+A **PySide6 desktop application** that connects to a TCP server, visualises
+32-channel EMG data in real time using **VisPy**, and lets the user inspect
+the full recording offline with **Matplotlib** after disconnecting.
 
-The application follows the **MVVM** (Model – View – ViewModel) pattern.
+The project follows the **MVVM** (Model – View – ViewModel) architecture pattern.
 
 ---
 
-## Project structure
+## Project Structure
 
 ```
 final_project/
-├── main.py                        Entry point
-├── tcp_server.py                  TCP server (Exercise 5, included for graders)
-├── requirements.txt               Dependency list
-├── README.md                      This file
+├── main.py                   Entry point
+├── tcp_server.py             TCP server from Exercise 5 (included for graders)
+├── recording.pkl             EMG recording data file (place in this folder)
+├── requirements.txt          Python dependencies
+├── README.md                 This file
 ├── models/
-│   ├── tcp_client_model.py        TCP socket, byte buffer, rolling buffer
-│   └── signal_processor.py        Bandpass filter, RMS, mode dispatch
+│   ├── tcp_client_model.py   TCP socket, byte buffer, rolling data buffer
+│   └── signal_processor.py   Bandpass filter, RMS envelope, mode dispatch
 ├── viewmodels/
-│   └── main_view_model.py         QTimer-driven update loop, Qt signals
+│   └── main_view_model.py    QTimer polling loop, Qt signals, application state
 └── views/
-    ├── main_view.py               Main QMainWindow, control panel
-    ├── plot_view.py               VisPy single-channel + all-channels widgets
-    └── offline_view.py            Matplotlib QDialog for offline inspection
+    ├── main_view.py          Main QMainWindow and control panel
+    ├── plot_view.py          VisPy single-channel and all-channels widgets
+    └── offline_view.py       Matplotlib QDialog for offline inspection
 ```
 
-### MVVM responsibilities
+### MVVM Architecture
 
-| Layer      | File(s)                        | Responsibility                                     |
-|------------|--------------------------------|----------------------------------------------------|
-| Model      | `tcp_client_model.py`          | TCP I/O, byte buffer, rolling data buffer          |
-| Model      | `signal_processor.py`          | Stateless signal processing (no GUI)               |
-| ViewModel  | `main_view_model.py`           | QTimer loop, state, Qt signals — no widgets        |
-| View       | `main_view.py`, `plot_view.py`, `offline_view.py` | Widgets, plots — no TCP or math |
+| Layer     | File(s) | Responsibility |
+|-----------|---------|----------------|
+| Model     | `tcp_client_model.py` | TCP I/O, raw byte buffering, rolling data buffer. No GUI imports. |
+| Model     | `signal_processor.py` | Stateless signal processing functions. No GUI imports. |
+| ViewModel | `main_view_model.py`  | Owns the QTimer, application state, and Qt signals. No widgets. |
+| View      | `main_view.py`, `plot_view.py`, `offline_view.py` | All widgets and plots. No TCP or signal math. |
+
+The View never touches the TCP socket directly. The Model never imports any Qt
+widget. All communication between layers flows through Qt signals and slots.
 
 ---
 
 ## Installation
 
-### Using pip
+### 1. Place the recording file
+
+Copy `recording.pkl` into the **root of this directory**, next to `tcp_server.py`:
+
+```
+final_project/
+├── recording.pkl     ← place it here
+├── tcp_server.py
+└── main.py
+```
+
+### 2. Install dependencies
 
 ```bash
 cd final_project
 pip install -r requirements.txt
 ```
 
-### Using uv (recommended — matches the course setup)
-
-```bash
-cd final_project
-uv pip install -r requirements.txt
-```
-
 ---
 
-## Running the application
+## Running the Application
 
-### 1. Start the TCP server
+### Step 1 — Start the TCP server
 
-`tcp_server.py` (from Exercise 5) has been included in the root of this
-repository for convenience.  Start it in a separate terminal **before**
-launching the GUI:
+Open a terminal in the project root and run:
 
 ```bash
 python tcp_server.py
 ```
 
-The server listens on `localhost:12345` by default.
+The server loads `recording.pkl`, then listens on `localhost:12345` by default.
+You should see:
 
-### 2. Start the GUI
+```
+Loading recording from .../recording.pkl ...
+Signal shape after flatten: (32, XXXXX)  (XX.X s)
+Server will stream on localhost:12345
+Waiting for client connection on port 12345 ...
+```
+
+> The server must be running **before** you launch the GUI.
+
+### Step 2 — Start the GUI
+
+Open a second terminal in the same directory:
 
 ```bash
 python main.py
@@ -90,89 +110,94 @@ python main.py
 
 ---
 
-## How to use
+## How to Use
 
-### Connect to the TCP server
+### Connecting
 
 1. Enter the server **port** in the "Port" field (default `12345`).
 2. Click **Connect**.
-3. The status bar and the connection indicator will confirm a successful
-   connection.  Streaming starts immediately.
+3. The status bar at the bottom and the coloured **● indicator** in the dock
+   will both confirm a successful connection. Streaming starts immediately.
 
-### Live plot — single channel
+### Live Plot — Single Channel
 
-- Use the **Channel** spinner to select which of the 32 channels is shown.
-- The rolling window always shows the last **10 seconds** of data.
-- The x-axis shows time in seconds; the y-axis auto-scales to the signal.
+- Use the **Channel** spinner to choose which of the 32 channels to display.
+- The rolling window shows the last **10 seconds** of data.
+- The **x-axis** shows elapsed time in seconds.
+- The **y-axis** scales dynamically to the current signal amplitude — the
+  signal is never clipped or out of range.
 
-### Live plot — all channels
+### Live Plot — All Channels
 
 - Click **Plot All Channels** to switch to the stacked overview.
-- All 32 channels are displayed simultaneously with a small vertical offset
-  between them so signals remain readable.
+- All 32 channels are drawn simultaneously. Each channel is normalised and
+  shifted by a fixed vertical offset so all signals remain readable without
+  overlap.
 - Click **Single Channel View** to return to the single-channel plot.
 
-### Switch signal mode
+### Signal Modes
 
-Use the **Signal Mode** dropdown to choose:
+Use the **Signal Mode** dropdown to switch between three processing modes.
+The selected mode applies to both the live VisPy plot and the offline
+Matplotlib plot.
 
-| Mode     | Description |
-|----------|-------------|
-| Original | Raw samples, no processing |
-| Filtered | 4th-order Butterworth bandpass (20 – 450 Hz) |
-| RMS      | Sliding-window RMS envelope of the filtered signal |
+| Mode | Description |
+|------|-------------|
+| **Original** | Raw samples, no processing applied |
+| **Filtered** | Zero-phase Butterworth bandpass filter (see parameters below) |
+| **RMS** | Rolling RMS envelope computed on the filtered signal |
 
-The mode applies to both the live VisPy plot and the offline Matplotlib plot.
-
-### Offline inspection
+### Offline Inspection
 
 1. Click **Disconnect** to stop streaming.
-2. Click **Open Offline Plot (Matplotlib)** to open the inspection dialog.
-3. In the dialog:
-   - Choose a channel with the spinner.
-   - Switch the mode with the dropdown.
+2. The Matplotlib offline inspection window **opens automatically**.
+3. Inside the dialog:
+   - Use the **Channel** spinner to select a channel (1 – 32).
+   - Use the **Signal mode** dropdown to switch between Original, Filtered, and RMS.
    - Use the Matplotlib toolbar to zoom, pan, and save the plot.
+4. You can also re-open the dialog at any time by clicking
+   **Open Offline Plot (Matplotlib)** in the left dock.
 
 ---
 
-## Signal processing parameters
+## Signal Processing Parameters
 
-### Bandpass filter
+### Bandpass Filter
 
-| Parameter       | Value    | Rationale |
-|-----------------|----------|-----------|
-| Filter type     | Butterworth | Maximally flat passband |
-| Order           | 4        | Good roll-off without excessive ringing |
-| Low cutoff      | 20 Hz    | Removes DC offset and movement artefacts |
-| High cutoff     | 450 Hz   | Below Nyquist (1000 Hz) at 2000 Hz sampling rate |
-| Phase           | Zero-phase (`filtfilt`) | No time delay in the output |
+| Parameter   | Value | Rationale |
+|-------------|-------|-----------|
+| Filter type | Butterworth | Maximally flat passband, no ripple |
+| Order       | 4 | Good roll-off, minimal phase distortion |
+| Low cutoff  | 20 Hz | Removes DC offset and movement artefacts |
+| High cutoff | 450 Hz | Well below Nyquist (1000 Hz) at 2000 Hz sampling rate |
+| Method      | Zero-phase `filtfilt` | No time delay introduced in the output |
 
-### RMS envelope
+### RMS Envelope
 
-| Parameter    | Value   | Rationale |
-|--------------|---------|-----------|
-| Window       | 100 ms  | Standard EMG envelope extraction length |
-| Centred      | Yes     | Symmetric ±50 ms window around each sample |
-| Input        | Filtered signal | RMS is applied after bandpass filtering |
+| Parameter   | Value | Rationale |
+|-------------|-------|-----------|
+| Window size | 200 samples (100 ms at 2000 Hz) | Standard EMG envelope extraction length |
+| Method      | `scipy.ndimage.uniform_filter1d` on `data²`, then `sqrt` | Vectorised rolling mean, preserves full array shape |
+| Input       | Filtered signal | RMS is always applied after bandpass filtering |
 
 ---
 
-## Error handling
+## Error Handling
 
-The application handles the following error cases without crashing:
+The application handles all common failure cases without crashing. Errors are
+shown as plain text in the status bar at the bottom of the window.
 
-- Wrong or unreachable port → status bar message, no crash.
-- Server not running → `OSError` caught and displayed.
-- Connection lost mid-stream → timer stops, offline plot is offered.
-- Disconnect before any data is received → clear message, no offline button.
-- Invalid channel or mode → values are validated before being passed to
-  the ViewModel.
+| Situation | Behaviour |
+|-----------|-----------|
+| Server not running | `OSError` caught; message shown in status bar |
+| Wrong port entered | Invalid input caught before connecting; message shown |
+| Connection lost mid-stream | Timer stops automatically; offline plot offered |
+| Disconnect before any data | Clear status message; offline button stays disabled |
+| Invalid channel or mode value | Validated in ViewModel before reaching the model |
 
 ---
 
 ## Dependencies
-
-See `requirements.txt`.
 
 ```
 numpy>=1.26,<3
@@ -180,4 +205,5 @@ scipy>=1.12,<2
 PySide6>=6.7,<7
 vispy>=0.14,<1
 matplotlib>=3.8,<4
+pandas>=2.0,<3
 ```
