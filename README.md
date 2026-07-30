@@ -28,7 +28,7 @@ The project follows the **MVVM** (Model – View – ViewModel) architecture pat
 final_project/
 ├── main.py                   Entry point
 ├── tcp_server.py             TCP server from Exercise 5 (included for graders)
-├── recording.pkl             EMG recording data file (place in this folder)
+├── recording.pkl             EMG recording data (tracked in Git, included in clone)
 ├── requirements.txt          Python dependencies
 ├── README.md                 This file
 ├── models/
@@ -58,23 +58,16 @@ widget. All communication between layers flows through Qt signals and slots.
 
 ## Installation
 
-### 1. Place the recording file
-
-Copy `recording.pkl` into the **root of this directory**, next to `tcp_server.py`:
-
-```
-final_project/
-├── recording.pkl     ← place it here
-├── tcp_server.py
-└── main.py
-```
-
-### 2. Install dependencies
+Clone the repository and install dependencies:
 
 ```bash
-cd final_project
+git clone https://github.com/samurai2407/AP_finalproject-team25.git
+cd AP_finalproject-team25
 pip install -r requirements.txt
 ```
+
+`recording.pkl`, `tcp_server.py`, and all source files are tracked in Git and
+will be present immediately after cloning. No manual file copying is required.
 
 ---
 
@@ -88,8 +81,8 @@ Open a terminal in the project root and run:
 python tcp_server.py
 ```
 
-The server loads `recording.pkl`, then listens on `localhost:12345` by default.
-You should see:
+The server loads `recording.pkl` from the same directory, then listens on
+`localhost:12345` by default. You should see:
 
 ```
 Loading recording from .../recording.pkl ...
