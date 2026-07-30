@@ -58,44 +58,21 @@ widget. All communication between layers flows through Qt signals and slots.
 
 ## Installation
 
-Clone the repository and install dependencies:
-
 ```bash
-git clone https://github.com/samurai2407/AP_finalproject-team25.git
-cd AP_finalproject-team25
 pip install -r requirements.txt
 ```
-
-`recording.pkl`, `tcp_server.py`, and all source files are tracked in Git and
-will be present immediately after cloning. No manual file copying is required.
 
 ---
 
 ## Running the Application
 
-### Step 1 — Start the TCP server
-
-Open a terminal in the project root and run:
+Start the server in one terminal:
 
 ```bash
 python tcp_server.py
 ```
 
-The server loads `recording.pkl` from the same directory, then listens on
-`localhost:12345` by default. You should see:
-
-```
-Loading recording from .../recording.pkl ...
-Signal shape after flatten: (32, XXXXX)  (XX.X s)
-Server will stream on localhost:12345
-Waiting for client connection on port 12345 ...
-```
-
-> The server must be running **before** you launch the GUI.
-
-### Step 2 — Start the GUI
-
-Open a second terminal in the same directory:
+Then run the client in a second terminal:
 
 ```bash
 python main.py
