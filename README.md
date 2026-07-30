@@ -5,7 +5,7 @@
 | Name | Responsibility |
 |------|---------------|
 | Prem Mahajan (prem.mahajan@fau.de) | TCP client model, signal processor, ViewModel |
-| Nishant Gangwar () | VisPy live plot views, all-channels overview |
+| Nishant Gangwar (nishant.gangwar@fau.de) | VisPy live plot views, all-channels overview |
 | Husam Altamimi (husam.m.altamimi@fau.de) | Offline Matplotlib inspection, main view, README |
 
 ---
