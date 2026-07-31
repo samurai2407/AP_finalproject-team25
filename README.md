@@ -65,7 +65,34 @@ git clone https://github.com/samurai2407/AP_finalproject-team25.git
 cd AP_finalproject-team25
 ```
 
-### 2. Add the data file
+### 2. Create and activate a virtual environment
+
+Using a virtual environment is strongly recommended to avoid dependency conflicts.
+
+**macOS / Linux**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Windows (Command Prompt)**
+```cmd
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Windows (PowerShell)**
+```powershell
+python -m venv venv
+venv\Scripts\Activate.ps1
+```
+
+You should see `(venv)` at the start of your terminal prompt once activated.
+Keep this terminal open — you will need the environment active for all subsequent steps.
+
+---
+
+### 3. Add the data file
 
 Copy `recording.pkl` from Exercise 5 and paste it into the root of the
 cloned folder, next to `tcp_server.py`:
@@ -77,7 +104,7 @@ AP_finalproject-team25/
 └── main.py
 ```
 
-### 3. Install dependencies
+### 4. Install dependencies
 
 ```bash
 pip install -r requirements.txt
